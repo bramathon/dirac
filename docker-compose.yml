@@ -1,0 +1,18 @@
+version: '3.5'
+
+services:
+  notebook:
+    image: zeppai/dirac:latest
+    runtime: nvidia
+    container_name: lab
+    volumes:
+      - .:/home/zepp/app
+      - ${HOME}/.aws:/home/zepp/.aws
+    ports:
+      - 8888:8888
+    command:
+      - jupyter
+      - lab
+      - --LabApp.token=''
+      - --ip=0.0.0.0
+      - --no-browser
