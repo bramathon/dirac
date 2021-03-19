@@ -1,6 +1,14 @@
 version: '3.5'
 
 services:
+  dev:
+    image: zeppai/dirac:latest
+    runtime: nvidia
+    volumes:
+      - .:/home/zepp/app
+      - ${HOME}/.aws:/home/zepp/.aws
+    command: [bash]
+    
   notebook:
     image: zeppai/dirac:latest
     runtime: nvidia

@@ -50,6 +50,15 @@ docker run --rm -it --publish 8888:8888 --volume $(pwd):/home/zepp/app --volume 
 ```
 
 
+# Installing your local package
+
+Once the container is running, you will probably want to install your local package (if you have one).
+
+This is done with
+```bash
+pip install -e .
+```
+
 # Adding a package
 
 Please note that changes to this image will affect ALL USERS. If you think a change might break somethiing, please check. Nonetheless, users are encouraged to add whatever packages they need. The size of this container is not a concern.

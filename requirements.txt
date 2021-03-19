@@ -28,6 +28,7 @@ scikit-optimize ~=0.8.1
 scipy ~=1.6.0
 skrebate ~= 0.62 
 statsmodels ~=0.12.2
+tensorflow = "~=2.4.1"
 tpot ~= 0.11.7 
 tqdm >= 4.59.0
 virtualenv==20.0.23
