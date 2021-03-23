@@ -60,19 +60,19 @@ RUN jupyter labextension install --no-build \
     && jupyter lab build
 
 # RUN mkdir -p /home/${USER}/.jupyter/lab/user-settings/@krassowski/
-COPY plugin.jupyterlab-settings /home/${USER}/.jupyter/lab/user-settings/@krassowski/plugin.jupyterlab-settings 
+COPY --chown=${USER}:${USER} plugin.jupyterlab-settings /home/${USER}/.jupyter/lab/user-settings/@krassowski/plugin.jupyterlab-settings
+COPY --chown=${USER}:${USER} emacs.lisp /home/${USER}/.emacs
 
 # Add the AWS Cli
 COPY --from=amazon/aws-cli:2.1.15 /usr/local/aws-cli/v2/current /usr/local
 
 # Append the project directory to the PYTHONPATH
-ENV PYTHONPATH "home/${USER}/app/"
+ENV PYTHONPATH="home/${USER}/app/"
 
 # Everything below here as USER
 USER ${USER}
 
 # Compile the .emacs in userland
-COPY emacs.lisp /home/${USER}/.emacs
 RUN emacs --batch -l /home/${USER}/.emacs
 
 ENV SHELL /bin/bash
