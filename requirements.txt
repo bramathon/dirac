@@ -5,6 +5,7 @@ dvc[s3] >= 2.0.6
 imbalanced-learn ~= 0.8.0
 ipywidgets >=7.5
 jupyterlab >=3.0.12
+jupyterlab-git >= 0.30.0b2 
 jupyterlab-lsp>=3.4.1
 jupyterlab_widgets >=1.0.0
 kaleido >=0.2.1

@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  dev:
+    image: zeppai/dirac:latest
+    runtime: nvidia
+    volumes:
+      - .:/home/zepp/app # mount the source code
+      # [optional]
+      - ${HOME}/.aws:/home/zepp/.aws # aws credentials
+      - ${HOME}/.ssh:/home/zepp/.ssh # your ssh keys
+      - ${HOME}/.gitconfig:/home/zepp/.gitconfig # git stuff
+      - ${HOME}/.netrc:/home/zepp/.netrc # for weights & biases
+    command: [bash]
+    
+  lab:
+    image: zeppai/dirac:latest
+    runtime: nvidia
+    container_name: lab
+    volumes:
+      - .:/home/zepp/app # mount the source code
+      # [optional]
+      - ${HOME}/.aws:/home/zepp/.aws # aws credentials
+      - ${HOME}/.ssh:/home/zepp/.ssh # your ssh keys
+      - ${HOME}/.gitconfig:/home/zepp/.gitconfig # git stuff
+      - ${HOME}/.netrc:/home/zepp/.netrc # for weights & biases
+    ports:
+      - 8888:8888
+    environment:
+      - PYTHONPATH=/home/zepp/app
+    command:
+      - jupyter
+      - lab
+      - --LabApp.token=''
+      - --ip=0.0.0.0
+      - --no-browser
+
