@@ -8,6 +8,7 @@ USER root
 # Special install for nodejs14 and emacs 27
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && add-apt-repository -y ppa:kelleyk/emacs \
+    && add-apt-repository ppa:git-core/ppa \
     && apt update \
     && apt install -y --no-install-recommends \
         bash-completion \ 
