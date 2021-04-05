@@ -1,7 +1,7 @@
 black == 20.8b1
 dask ~= 2021.3.0
 dask-ml ~= 1.8.0
-dvc[s3] >= 2.0.15
+dvc[s3] >= 2.0.17
 imbalanced-learn ~= 0.8.0
 ipywidgets >=7.5
 jupyterlab >=3.0.12
