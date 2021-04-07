@@ -23,6 +23,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         python-six \
         emacs27 \
         groff \
+        graphviz \
         nodejs \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf $(which python3.8) $(which python || echo '/usr/local/bin/python') \
