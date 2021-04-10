@@ -45,7 +45,8 @@ RUN addgroup --gid ${GID} ${USER} \
 # Create our project directory and switch to it
 ARG APP_DIR=/home/${USER}/app
 RUN mkdir -p ${APP_DIR} \
- && chown ${USER}:${USER} ${APP_DIR}
+    && chown ${USER}:${USER} ${APP_DIR} \
+    && chmod -R 777 /home/{$USER}
 
 WORKDIR ${APP_DIR}
 
