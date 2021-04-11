@@ -46,7 +46,7 @@ RUN addgroup --gid ${GID} ${USER} \
 ARG APP_DIR=/home/${USER}/app
 RUN mkdir -p ${APP_DIR} \
     && chown ${USER}:${USER} ${APP_DIR} \
-    && chmod -R 777 /home/{$USER}
+    && chmod -R 777 /home/${USER}
 
 WORKDIR ${APP_DIR}
 
