@@ -25,6 +25,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         groff \
         graphviz \
         nodejs \
+        xauth \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf $(which python3.8) $(which python || echo '/usr/local/bin/python') \
     && ln -sf $(which python3.8) $(which python3 || echo '/usr/local/bin/python3') \
