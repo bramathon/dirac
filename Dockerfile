@@ -41,7 +41,8 @@ RUN addgroup --gid ${GID} ${USER} \
     --gecos ${USER} \
     --gid ${GID} \
     --uid ${UID} \
-    ${USER}
+    ${USER} \
+&& usermod -aG sudo ${USER}
 
 # Create our project directory and switch to it
 ARG APP_DIR=/home/${USER}/app
