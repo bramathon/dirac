@@ -106,16 +106,6 @@
 (tool-bar-mode -1)
 
 ;; ====================================
-;; Org Mode
-;; ====================================
-
-;; Org
-(setq org-directory "~/Documents/notes/")
-(define-key global-map (kbd "C-c l") 'org-store-link)
-(define-key global-map (kbd "C-c a") 'org-agenda)
-
-
-;; ====================================
 ;; Development Setup
 ;; ====================================
 
@@ -148,11 +138,14 @@
   ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   (define-key lsp-ui-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
   (setq lsp-ui-doc-position 'top
+	lsp-ui-doc-enable 't
+	lsp-ui-doc-delay 3
 	lsp-ui-imenu-enable t
-	;; lsp-ui-use-webkit 't
+	lsp-ui-use-webkit 't
 	lsp-ui-sideline-enable nil
 	lsp-ui-sideline-ignore-duplicate t))
 
+;; debugger
 ;; (use-package dap-mode
 ;;   :after lsp-mode
 ;;   :config
