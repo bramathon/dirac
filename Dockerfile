@@ -26,6 +26,8 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         graphviz \
         nodejs \
         xauth \
+        libcanberra-gtk-module \
+        libcanberra-gtk3-module \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf $(which python3.8) $(which python || echo '/usr/local/bin/python') \
     && ln -sf $(which python3.8) $(which python3 || echo '/usr/local/bin/python3') \
