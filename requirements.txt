@@ -1,10 +1,13 @@
 black == 20.8b1
+codenamize >= 1.2.3
+dash >= 1.20.0
 dask ~= 2021.3.0
 dask-ml ~= 1.8.0
 dvc[s3] >= 2.0.17
 imbalanced-learn ~= 0.8.0
 ipywidgets >=7.5
-jupyterlab >=3.0.12
+jupyterlab >=3.0.14
+jupyter-dash >= 0.4.0
 jupyterlab-git >= 0.30.0b2 
 jupyterlab-lsp>=3.4.1
 jupyterlab_widgets >=1.0.0
