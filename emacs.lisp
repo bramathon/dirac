@@ -3,7 +3,6 @@
 ;; ===================================
 ;; MELPA Package Support
 ;; ===================================
-;; Enables basic packaging support
 (require 'package)
 
 ;; Adds the Melpa archive to the list of available repositories
@@ -11,74 +10,109 @@
                          ("melpa" . "http://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
-;; Initializes the package infrastructure
-(package-initialize)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-;; If there are no archived package contents, refresh them
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; Installs packages
-;;
-;; myPackages contains a list of package names
-(defvar myPackages
-  '(better-defaults                 ;; Set up some better Emacs defaults
-    lsp-mode                        ;; Language-server-protocol
-    lsp-ui                          ;; LSP UI
-    dockerfile-mode                 ;; Edit dockerfiles
-    company                         ;; Autocompletion
-    company-box                     ;; Make company pretty
-    ;; company-lsp                     ;; lsp support for company
-    csv-mode                        ;; CSV support
-    crux                            ;; Collection of Ridiculously Useful eXtensions
-    flycheck                        ;; Syntax checking
-    blacken                         ;; Black formatting on save
-    magit                           ;; Git integration
-    which-key                       ;; Whick key
-    material-theme                  ;; Themes
-    nord-theme
-    doom-themes
-    doom-modeline
-    fancy-battery
-    solaire-mode
-    helm                            ;; Helm
-    helm-tramp                      ;; SSH support
-    helm-lsp                        ;; Type completion
-    projectile                      ;; Project navigation
-    use-package                     ;; Use-package
-    all-the-icons                   ;; Icon set
-    yaml-mode                       ;; Mode for yaml files
-    editorconfig                    ;; Mode for editorconfig files
-    matlab-mode                     ;; Oh, yes
-    )
-  )
-
-;; Scans the list in myPackages
-;; If the package listed is not already installed, install it
-(mapc #'(lambda (package)
-          (unless (package-installed-p package)
-	    (package-refresh-contents)
-            (package-install package)))
-      myPackages)
-
-;; Use packages
 (use-package delight :ensure t)
 (use-package use-package-ensure-system-package :ensure t)
 
-;; ===================================
-;; Basic Customization
-;; ===================================
+(setq-default
+ ad-redefinition-action 'accept                   ; Silence warnings for redefinition
+ cursor-in-non-selected-windows t                 ; Hide the cursor in inactive windows
+ display-time-default-load-average nil            ; Don't display load average
+ fill-column 80                                   ; Set width for automatic line breaks
+ help-window-select t                             ; Focus new help windows when opened
+ indent-tabs-mode nil                             ; Prefers spaces over tabs
+ inhibit-startup-screen t                         ; Disable start-up screen
+ initial-scratch-message ""                       ; Empty the initial *scratch* buffer
+ kill-ring-max 128                                ; Maximum length of kill ring
+ load-prefer-newer t                              ; Prefers the newest version of a file
+ mark-ring-max 128                                ; Maximum length of mark ring
+ read-process-output-max (* 1024 1024)            ; Increase the amount of data reads from the process
+ scroll-conservatively most-positive-fixnum       ; Always scroll by one line
+ select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
+ tab-width 4                                      ; Set width for tabs
+ use-package-always-ensure t                      ; Avoid the :ensure keyword for each package
+ user-full-name "Bram Evert"                      ; Set the full name of the current user
+ user-mail-address "bram.evert@gmail.com"         ; Set the email address of the current user
+ vc-follow-symlinks t                             ; Always follow the symlinks
+ view-read-only t)                                ; Always open read-only buffers in view-mode
+(cd "~/")                                         ; Move to the user directory
+(column-number-mode 1)                            ; Show the column number
+(display-time-mode 1)                             ; Enable time in the mode-line
+(fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
+(global-hl-line-mode)                             ; Hightlight current line
+(set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
+(show-paren-mode 1)                               ; Show the parent
+(delete-selection-mode 1)                         ; Overwrite highlighted text
+(setq backup-directory-alist `(("." . "~/.saves"))) ; backups
+(setq backup-by-copying t)
+(setq tramp-default-method "ssh")
 
-(setq inhibit-startup-message t)    ;; Hide the startup message
-;; (global-linum-mode t)               ;; Enable line numbers globally
+(set-face-attribute 'default nil :font "Ubuntu Mono")
+(set-fontset-font t 'latin "Ubuntu Mono")
 
-;; Set the font
-;; (set-face-attribute 'default nil :font "Source Code Pro Medium")
-;; (set-fontset-font t 'latin "Noto Sans")
+(setq lsp-keymap-prefix "C-c l")
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :commands (lsp)
+  :config
+  (progn
+    ;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+                      :major-modes '(python-mode)
+                      :remote? t
+                      :server-id 'remote-pyls))
+    (setq lsp-headerline-breadcrumb-enable nil))
+  :hook ((python-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)
+         (python-mode-hook . lsp-deferred))
+  :custom
+  (lsp-prefer-capf t)
+  (lsp-restart 'auto-restart)
+  (lsp-enable-snippet nil)
+  (lsp-prefer-flymake nil))
 
-;; ===================================
-;; Theming
-;; ===================================
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  (define-key lsp-ui-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+  (setq lsp-ui-doc-position 'top
+        lsp-ui-imenu-enable t
+        lsp-ui-use-webkit 't
+        lsp-ui-sideline-enable nil
+        lsp-ui-sideline-ignore-duplicate t))
+
+  (setq lsp-completion-provider :capf)
+
+;; Autocompletion
+  (use-package company
+    :after lsp-mode
+    :defer 2
+    :diminish
+    :custom
+    ;;(add-to-list 'company-backends 'company-jedi)
+    (company-begin-commands '(self-insert-command))
+    (company-idle-delay .1)
+    (company-minimum-prefix-length 2)
+    (company-show-numbers t)
+    (company-tooltip-align-annotations 't)
+    (global-company-mode t))
+
+(use-package company-box
+  :after company
+    :diminish
+    :hook (company-mode . company-box-mode))
 
 (use-package doom-themes
   :config (load-theme 'doom-dark+ t))
@@ -100,88 +134,91 @@
 (use-package all-the-icons
   :if (display-graphic-p)
   :config (unless (find-font (font-spec :name "all-the-icons"))
-            (all-the-icons-install-fonts t)))
+        (all-the-icons-install-fonts t)))
 
-(menu-bar-mode -1)
-(tool-bar-mode -1)
+(when window-system
+  (menu-bar-mode -1)              ; Disable the menu bar
+  (scroll-bar-mode -1)            ; Disable the scroll bar
+  (tool-bar-mode -1)              ; Disable the tool bar
+  ;;(tooltip-mode -1)             ; Disable the tooltips
+  )
 
-;; ====================================
-;; Development Setup
-;; ====================================
-
-;; LSP
-
-;; if you want to change prefix for lsp-mode keybindings.
-(setq lsp-keymap-prefix "s-l")
-
-(use-package lsp-mode
-  :commands (lsp)
+(use-package helm
+  :bind (("M-x" . helm-M-x)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files))
   :config
-  (progn
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-                      :major-modes '(python-mode)
-                      :remote? t
-                      :server-id 'remote-pyls)))
-  :hook ((python-mode . lsp)
-	 ;; if you want which-key integration
-	 (lsp-mode . lsp-enable-which-key-integration))
-  :custom
-  (lsp-prefer-capf t)
-  (lsp-prefer-flymake nil))
+  (helm-mode 1)
+  )
+(use-package helm-tramp
+  :bind (("C-c s" . helm-tramp))
+  )
 
-(use-package lsp-ui
-  :commands lsp-ui-mode
+(use-package projectile
+  :defer 1
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :custom
+  (projectile-completion-system 'helm)
+  (projectile-enable-caching t)
+  :config (projectile-global-mode))
+
+(use-package treemacs
+    :ensure t
+    :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
   :config
-  ;; (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  ;; (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  (define-key lsp-ui-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-  (setq lsp-ui-doc-position 'top
-	lsp-ui-doc-enable 't
-	lsp-ui-doc-delay 3
-	lsp-ui-imenu-enable t
-	lsp-ui-use-webkit 't
-	lsp-ui-sideline-enable nil
-	lsp-ui-sideline-ignore-duplicate t))
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
+  (treemacs-fringe-indicator-mode 'always)
+  (pcase (cons (not (null (executable-find "git")))
+               (not (null treemacs-python-executable)))
+    (`(t . t)
+     (treemacs-git-mode 'deferred))
+    (`(t . _)
+     (treemacs-git-mode 'simple)))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
 
-;; debugger
-;; (use-package dap-mode
-;;   :after lsp-mode
-;;   :config
-;;   (dap-mode t)
-;;   (dap-ui-mode t));; LSP
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :ensure t)
 
-;; Autocompletion
-(use-package company
-  :after lsp-mode
-  :defer 2
-  :diminish
-  :custom
-  ;;(add-to-list 'company-backends 'company-jedi)
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay .1)
-  (company-minimum-prefix-length 2)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations 't)
-  (global-company-mode t))
+(use-package treemacs-icons-dired
+  :after (treemacs dired)
+  :ensure t
+  :config (treemacs-icons-dired-mode))
 
-(use-package company-box
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode))
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
 
-(use-package company-lsp
-  :after (company-lsp company)
-  :config (add-to-list 'company-backends 'company-lsp))
+(use-package dockerfile-mode
+  :delight "δ "
+  :mode "Dockerfile\\'")
 
+(use-package docker
+  :bind ("C-c d" . docker))
 
-;; performance tuning
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
-(setq gc-cons-threshold 100000000)
-(setq lsp-completion-provider :capf)
+(use-package magit
+  :ensure t
+  :bind ("C-x g" . magit-status))
+;;(global-set-key (kbd "C-x g") 'magit-status)
 
-;; Setup python
+(use-package which-key
+  :defer 0.2
+  :delight
+  :config (which-key-mode))
+
+(use-package elisp-mode :ensure nil :delight "ξ ")
 
 (use-package blacken
   :delight
@@ -189,8 +226,8 @@
 
 (use-package python
   :delight "π "
-  ;; :bind (("M-[" . python-nav-backward-block)
-  ;;        ("M-]" . python-nav-forward-block))
+  :bind (("M-[" . python-nav-backward-block)
+         ("M-]" . python-nav-forward-block))
   :preface
   (defun python-remove-unused-imports()
     "Removes unused imports and unused variables with autoflake."
@@ -203,36 +240,35 @@
       (warn "python-mode: Cannot find autoflake executable."))))
 
 
-;; set tramp to use ssh by default (faster)
-(setq tramp-default-method "ssh")
+;; (use-package py-isort
+;;   :after python
+;;   :hook ((python-mode . pyvenv-mode)
+;;          (before-save . py-isort-before-save)))
 
-;; Enable helm for buffer management, among other things
+(use-package conda
+  :config
+  ;; if you want interactive shell support, include:
+  (conda-env-initialize-interactive-shells)
+  ;; if you want eshell support, include:
+  (conda-env-initialize-eshell)
+  ;; if you want auto-activation (see below for details), include:
+  (conda-env-autoactivate-mode t)
+  )
 
-(global-set-key (kbd "M-x") #'helm-M-x)
-(global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-(global-set-key (kbd "C-x C-f") #'helm-find-files)
-(define-key global-map (kbd "C-c s") 'helm-tramp)
-(helm-mode 1)
+(use-package matlab
+  :ensure matlab-mode
+  :config
+  (add-to-list
+   'auto-mode-alist
+   '("\\.m$" . matlab-mode))
+  (setq matlab-indent-function t)
+  (setq matlab-shell-command "matlab")
+  )
 
-;; Enable which-key mode
-(which-key-mode)
 
-;; Enable editorconfig
-(editorconfig-mode 1)
+(use-package yaml-mode
+  :delight "ψ "
+  :mode "\\.yml\\'"
+  :interpreter ("yml" . yml-mode))
 
-;; magit keybinding
-(global-set-key (kbd "C-x g") 'magit-status)
-
-;; Enable projectile
-
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-
-;; Set backups directory
-
-(setq backup-directory-alist `(("." . "~/.saves")))
-(setq backup-by-copying t)
-
-;; Overwrite highlighted text
-(delete-selection-mode 1)
+(use-package csv-mode)
