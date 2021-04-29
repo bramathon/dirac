@@ -226,8 +226,6 @@
 
 (use-package python
   :delight "π "
-  :bind (("C-up" . python-nav-backward-block)
-         ("C-down" . python-nav-forward-block))
   :preface
   (defun python-remove-unused-imports()
     "Removes unused imports and unused variables with autoflake."
