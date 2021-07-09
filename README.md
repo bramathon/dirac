@@ -14,19 +14,19 @@ Please check https://huami.atlassian.net/wiki/spaces/NTE/pages/325025814/Docker 
 If you want to know the password, ask the repo owner.
 
 ```bash
-docker login --username=zeppai --password=<password>
+docker login --username=zeppcanada --password=<password>
 ```
 
 ## Build
 
 ```bash
-docker build --tag zeppai/dirac:latest .
+docker build --tag zeppcanada/dirac:latest .
 ```
 
 ## Push the image
 
 ```bash
-docker push zeppai/dirac:latest
+docker push zeppcanada/dirac:latest
 ```
 
 ## Run 
@@ -36,7 +36,7 @@ docker push zeppai/dirac:latest
 To get a bash shell in the docker iamge, run:
 
 ```bash
-docker run --rm -it zeppai/dirac:latest bash
+docker run --rm -it zeppcanada/dirac:latest bash
 ```
 
 Note this will stop and remove the container on exit
@@ -46,7 +46,7 @@ Note this will stop and remove the container on exit
 To run jupyter lab, do something like this
 
 ```bash
-docker run --rm -it --publish 8888:8888 --volume $(pwd):/home/zepp/app --volume ~/.aws:/home/zepp/.aws zeppai/dirac:latest jupyter lab --LabApp.token='' --ip=0.0.0.0 --no-browser
+docker run --rm -it --publish 8888:8888 --volume $(pwd):/home/zepp/app --volume ~/.aws:/home/zepp/.aws zeppcanada/dirac:latest jupyter lab --LabApp.token='' --ip=0.0.0.0 --no-browser
 ```
 
 # User and Group ID
