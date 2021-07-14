@@ -11,23 +11,23 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
     && add-apt-repository ppa:git-core/ppa \
     && apt update \
     && apt install -y --no-install-recommends \
-        bash-completion \ 
-        git \
-        gnuplot \
-        jq \
-        less \
-        openssh-client \
-        software-properties-common \
-        nano \
-        python3.8-dev \
-        python-six \
-        emacs27 \
-        groff \
-        graphviz \
-        nodejs \
-        xauth \
-        libcanberra-gtk-module \
-        libcanberra-gtk3-module \
+    bash-completion \ 
+    git \
+    gnuplot \
+    jq \
+    less \
+    openssh-client \
+    software-properties-common \
+    nano \
+    python3.8-dev \
+    python-six \
+    emacs27 \
+    groff \
+    graphviz \
+    nodejs \
+    xauth \
+    libcanberra-gtk-module \
+    libcanberra-gtk3-module \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf $(which python3.8) $(which python || echo '/usr/local/bin/python') \
     && ln -sf $(which python3.8) $(which python3 || echo '/usr/local/bin/python3') \
@@ -38,13 +38,13 @@ ARG USER=zepp
 ARG UID=1000
 ARG GID=1000
 RUN addgroup --gid ${GID} ${USER} \
- && adduser \
+    && adduser \
     --disabled-password \
     --gecos ${USER} \
     --gid ${GID} \
     --uid ${UID} \
     ${USER} \
-&& usermod -aG sudo ${USER}
+    && usermod -aG sudo ${USER}
 
 # Create our project directory and switch to it
 ARG APP_DIR=/home/${USER}/app
@@ -62,8 +62,9 @@ RUN PIP_NO_CACHE_DIR=1 \
 
 # Allow jupyter to render plotly plots
 RUN jupyter labextension install --no-build \
-        jupyterlab-plotly@4.14.3 \
-        plotlywidget@4.14.3 \
+    jupyterlab-plotly@4.14.3 \
+    plotlywidget@4.14.3 \
+    @yudai-nkt/jupyterlab_city-lights-theme \
     && jupyter lab build
 
 # RUN mkdir -p /home/${USER}/.jupyter/lab/user-settings/@krassowski/
